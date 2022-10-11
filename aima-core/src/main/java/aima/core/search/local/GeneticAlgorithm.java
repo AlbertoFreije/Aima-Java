@@ -70,17 +70,17 @@ public class GeneticAlgorithm<A> {
 	protected Random random;
 	private List<ProgressTracker<A>> progressTrackers = new ArrayList<>();
 
-	public GeneticAlgorithm(int individualLength, Collection<A> finiteAlphabet, double mutationProbability) {
-		this(individualLength, finiteAlphabet, mutationProbability, new Random());
+	public GeneticAlgorithm(int individualLength, Collection<A> finiteAlphabet, double mutationProbability, double crosoverProbibility) {
+		this(individualLength, finiteAlphabet, mutationProbability, new Random(),crosoverProbibility);
 	}
 
 	public GeneticAlgorithm(int individualLength, Collection<A> finiteAlphabet, double mutationProbability,
-			Random random) {
+			Random random, double crosoverProbibility) {
 		this.individualLength = individualLength;
 		this.finiteAlphabet = new ArrayList<A>(finiteAlphabet);
 		this.mutationProbability = mutationProbability;
 		this.random = random;
-		this.crossoverProbability = 0.7;
+		this.crossoverProbability = crosoverProbibility;
 
 		assert (this.mutationProbability >= 0.0 && this.mutationProbability <= 1.0);
 		assert (this.crossoverProbability >= 0.6 && this.crossoverProbability <= 1.0);
@@ -94,9 +94,11 @@ public class GeneticAlgorithm<A> {
 	/**
 	 * Starts the genetic algorithm and stops after a specified number of
 	 * iterations.
+	 * @param crosoverProbibility 
+	 * @param crosoverProbibility 
 	 */
 	public Individual<A> geneticAlgorithm(Collection<Individual<A>> initPopulation,
-			FitnessFunction<A> fitnessFn, final int maxIterations) {
+			FitnessFunction<A> fitnessFn, final int maxIterations, double crosoverProbibility) {
 		Predicate<Individual<A>> goalTest = state -> getIterations() >= maxIterations;
 		return geneticAlgorithm(initPopulation, fitnessFn, goalTest, 0L);
 	}
@@ -138,7 +140,7 @@ public class GeneticAlgorithm<A> {
 		// repeat
 		int itCount = 0;
 		do {
-			population = nextGeneration(population, fitnessFn);
+			population = nextGeneration(population, fitnessFn, bestIndividual); //ejercicio 6
 			bestIndividual = retrieveBestIndividual(population, fitnessFn);
 
 			updateMetrics(population, ++itCount, System.currentTimeMillis() - startTime);
@@ -283,10 +285,12 @@ public class GeneticAlgorithm<A> {
 		// Default result is last individual
 		// (just to avoid problems with rounding errors)
 		Individual<A> selected = population.get(population.size() - 1);
-
+		
+		double minFitness = Double.MAX_VALUE; //ejercicio 7
 		// Determine all of the fitness values
 		double[] fValues = new double[population.size()];
 		for (int i = 0; i < population.size(); i++) {
+			fValues[i] = minFitness; //ejercicio7
 			fValues[i] = fitnessFn.apply(population.get(i));
 		}
 		// Normalize the fitness values

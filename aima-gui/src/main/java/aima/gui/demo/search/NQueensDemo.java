@@ -153,6 +153,7 @@ public class NQueensDemo {
 		final double mutationProbability = 0.15;
 		final int popSize = 50;
 		final int numberOfGenerations = 1000;
+		final double crosoverProbibility = 0.6;
 		
 		FitnessFunction<Integer> fitnessFunction = NQueensGenAlgoUtil.getFitnessFunction();
 		Predicate<Individual<Integer>> goalTest = NQueensGenAlgoUtil.getGoalTest();
@@ -164,10 +165,10 @@ public class NQueensDemo {
 			population.add(NQueensGenAlgoUtil.generateRandomIndividual(boardSize));
 
 		GeneticAlgorithm<Integer> ga = new GeneticAlgorithm<>(boardSize,
-				NQueensGenAlgoUtil.getFiniteAlphabetForBoardOfSize(boardSize), mutationProbability); //cambio
+				NQueensGenAlgoUtil.getFiniteAlphabetForBoardOfSize(boardSize), mutationProbability,crosoverProbibility); //cambio
 
 		// Run for a set amount of time
-		Individual<Integer> bestIndividual = ga.geneticAlgorithm(population, fitnessFunction, numberOfGenerations); //cambio
+		Individual<Integer> bestIndividual = ga.geneticAlgorithm(population, fitnessFunction, numberOfGenerations,crosoverProbibility); //cambio
 		System.out.println("Max time 1 second, Best Individual:\n"
 				+ NQueensGenAlgoUtil.getBoardForIndividual(bestIndividual));
 		System.out.println("Board Size      = " + boardSize);
